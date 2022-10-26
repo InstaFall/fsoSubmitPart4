@@ -1,4 +1,5 @@
-const dummy = (blogs) => { // eslint-disable-line no-unused-vars
+/*  eslint-disable no-unused-vars */
+const dummy = (blogs) => {
   return 1
 }
 
@@ -12,7 +13,12 @@ const totalLikes = (blogs) => {
   //} else return 0
 }
 
+const favoriteBlog = (blogs) => {
+  return blogs.reduce((prev,curr) => prev.likes > curr.likes ? prev : curr)
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }

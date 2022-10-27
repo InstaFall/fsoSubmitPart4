@@ -92,7 +92,7 @@ describe('The one with the most blogs', () => {
   const testArr = [
     {
       author: 'First Author',
-      blogs: 20,
+      blogs: 25,
       title: 'Zort'
     },
     {
@@ -107,10 +107,8 @@ describe('The one with the most blogs', () => {
   ]
   test('is ', () => {
     expect(mostBlogs(testArr)).toEqual({
-
-      author: 'First Author',
-      blogs: 20,
-      title: 'Zort'
+      author: 'Third Author',
+      blogs: 30
     })
   })
 })

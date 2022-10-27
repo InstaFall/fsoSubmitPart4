@@ -1,4 +1,4 @@
-const { favoriteBlog, mostBlogs , dummy, totalLikes } = require('../utils/list_helper')
+const { favoriteBlog, mostBlogs , dummy, totalLikes, mostLikes } = require('../utils/list_helper')
 
 const blogList = [{
   _id: '5a422a851b54a676234d17f7',
@@ -92,23 +92,53 @@ describe('The one with the most blogs', () => {
   const testArr = [
     {
       author: 'First Author',
-      blogs: 25,
+      blogs: 50,
       title: 'Zort'
     },
     {
       author: 'Second Author',
-      blogs: 10,
+      blogs: 60,
       title: 'Nediyo'
     },{
       author: 'Third Author',
-      blogs: 30,
+      blogs: 60,
       title: 'Zortingen'
-    },
+    }
   ]
-  test('is ', () => {
-    expect(mostBlogs(testArr)).toEqual({
-      author: 'Third Author',
-      blogs: 30
+  test('has 60 blogs', () => {
+    expect(mostBlogs(testArr)).toMatchObject({
+      blogs: 60
     })
+  })
+  test('and its author is Second Author', () => {
+    expect(mostBlogs(testArr).author).toBe('Second Author')
+  })
+})
+
+describe('The one with the most likes\'', () => {
+  const testArr = [
+    {
+      author: 'Author Uno',
+      likes: 34,
+      title: 'It'
+    },
+    {
+      author: 'Author Dostoyevski',
+      likes: 15,
+      title: 'Sherlock Holmes'
+    },
+    {
+      author: 'Author Tres',
+      likes: 0,
+      title: 'Avengers'
+    }
+  ]
+  test('has 34 likes ', () => {
+    expect(mostLikes(testArr)).toMatchObject({
+      likes: 34
+    })
+  })
+  test('and its author is Second Author', () => {
+    expect(mostLikes(testArr).author).toBe('Author Uno')
   })
 })

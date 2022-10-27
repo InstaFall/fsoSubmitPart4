@@ -1,7 +1,4 @@
-const { favoriteBlog } = require('../utils/list_helper')
-
-const dummy = require('../utils/list_helper').dummy
-const totalLikes = require('../utils/list_helper').totalLikes
+const { favoriteBlog, mostBlogs , dummy, totalLikes } = require('../utils/list_helper')
 
 const blogList = [{
   _id: '5a422a851b54a676234d17f7',
@@ -88,5 +85,32 @@ describe('Favorite blog', () => {
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
       __v: 0 })
+  })
+})
+
+describe('The one with the most blogs', () => {
+  const testArr = [
+    {
+      author: 'First Author',
+      blogs: 20,
+      title: 'Zort'
+    },
+    {
+      author: 'Second Author',
+      blogs: 10,
+      title: 'Nediyo'
+    },{
+      author: 'Third Author',
+      blogs: 30,
+      title: 'Zortingen'
+    },
+  ]
+  test('is ', () => {
+    expect(mostBlogs(testArr)).toEqual({
+
+      author: 'First Author',
+      blogs: 20,
+      title: 'Zort'
+    })
   })
 })

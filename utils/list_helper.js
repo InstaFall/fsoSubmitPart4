@@ -1,4 +1,6 @@
+const maxBy = require('lodash/maxBy')
 /*  eslint-disable no-unused-vars */
+
 const dummy = (blogs) => {
   return 1
 }
@@ -17,8 +19,14 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce((prev,curr) => prev.likes > curr.likes ? prev : curr)
 }
 
+const mostBlogs = (list) => {
+  const most = maxBy(list,'blogs')
+  return { author: most.author, blogs: most.blogs }
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }

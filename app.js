@@ -1,11 +1,12 @@
+require('express-async-errors')
 const express = require('express')
-const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const logger = require('./utils/logger')
 const config = require('./utils/config')
 const router = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
+const app = express()
 
 logger.info('Connecting...')
 

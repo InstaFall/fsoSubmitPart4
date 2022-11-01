@@ -17,6 +17,7 @@ const initialBlogs = [
 
 const nonExistingId = async () => {
   const dummyBlog = new Blog({ title:'blog will be removed', url:'lorem', author:'ipsum', likes:0 })
+
   await dummyBlog.save()
   await dummyBlog.remove()
   return dummyBlog._id.toString()

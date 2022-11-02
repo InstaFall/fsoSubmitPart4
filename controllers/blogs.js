@@ -1,12 +1,12 @@
 const Blog = require('../models/blog')
-const router = require('express').Router()
+const blogRouter = require('express').Router()
 
-router.get('/', async (req,res) => {
+blogRouter.get('/', async (req,res) => {
   const result = await Blog.find({})
   res.json(result)
 })
 
-router.get('/:id', async (req,res) => {
+blogRouter.get('/:id', async (req,res) => {
   const blog = await Blog.findById(req.params.id)
   if (blog) {
     res.json(blog)
@@ -16,7 +16,7 @@ router.get('/:id', async (req,res) => {
 
 })
 
-router.post('/', async (req,res) => {
+blogRouter.post('/', async (req,res) => {
   const body = req.body
 
   const newBlog = new Blog({
@@ -29,12 +29,12 @@ router.post('/', async (req,res) => {
   res.status(201).json(savedBlog)
 })
 
-router.delete('/:id', async (req,res) => {
+blogRouter.delete('/:id', async (req,res) => {
   await Blog.findByIdAndDelete(req.params.id)
   res.status(204).end()
 })
 
-router.put('/:id', async (req,res) => {
+blogRouter.put('/:id', async (req,res) => {
   const body = req.body
   const updatedBlog = {
     author: body.author,
@@ -46,4 +46,4 @@ router.put('/:id', async (req,res) => {
   res.json(result)
 })
 
-module.exports = router
+module.exports = blogRouter

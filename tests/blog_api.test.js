@@ -178,7 +178,6 @@ describe('updating a blog', () => {
     const blogs = await helper.blogsInDb()
     const toUpdateId = blogs[0].id
     const newLikes = Math.floor(Math.random()*500)
-    console.log(newLikes)
     const blogWithNewLikes = { ...blogs[0], likes: newLikes }
     await api
       .put(`/api/blogs/${toUpdateId}`)

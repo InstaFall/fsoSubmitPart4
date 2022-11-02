@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs/
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBoZW5vbWVuYWwiLCJpZCI6IjYzNjJlNGM0NTkzZWViOWU4OWMyMmZjYiIsImlhdCI6MTY2NzQyNzkzOCwiZXhwIjoxNjY3NDMxNTM4fQ.6we-sgKl3JgpEQDKIOAMHqBaK_ENiLEOEvjq0D-PA
+
+{
+    "title": "This Blog Cant Be Saved",
+    "author": "ZOOOOOORT",
+    "url": "http://example.org",
+    "likes": 11
+}

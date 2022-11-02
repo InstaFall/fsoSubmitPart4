@@ -11,7 +11,10 @@ describe('when there is one user in database', () => {
     await User.deleteMany({})
 
     const pwHash = await bcrypt.hash('zottirizort', 10)
-    const newUser = new User({ username: 'root', passwordHash: pwHash })
+    const newUser = new User({
+      username: 'root',
+      passwordHash: pwHash
+    })
     await newUser.save()
   })
 
@@ -35,13 +38,10 @@ describe('users post requests', () => {
       name: 'Faulty Username',
       password: 'superstrongpw'
     }
-
     const response = await api
       .post('/api/users')
       .send(faultyUsername)
       .expect(400)
-
-    console.log(response.body)
     expect(response.body.error).toContain('minimum length is 3')
   })
 
@@ -55,8 +55,6 @@ describe('users post requests', () => {
       .post('/api/users')
       .send(faultyPassword)
       .expect(400)
-
-    console.log(response.body)
     expect(response.body.error).toContain('minimum length is 3')
   })
 
@@ -69,7 +67,7 @@ describe('users post requests', () => {
       .post('/api/users')
       .send(missingUsername)
       .expect(400)
-    console.log(response.body)
+    expect(response.body.error).toContain('missing data')
   })
 
   test('fails when password is missing', async () => {
@@ -81,11 +79,24 @@ describe('users post requests', () => {
       .post('/api/users')
       .send(missingPassword)
       .expect(400)
-    console.log(response.body)
+    expect(response.body.error).toContain('missing data')
   })
 })
 
-
+describe('new user', () => {
+  test('can be added when valid', async () => {
+    const newUser = {
+      name: 'Third User',
+      username: 'phenomenal',
+      password: 'uncrackable'
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()

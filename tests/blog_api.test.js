@@ -6,8 +6,11 @@ const helper = require('../tests/test_helper')
 const api = supertest(app)
 
 beforeEach(async () => {
+  const users = await helper.usersInDb()
+  const rootId = users[0].id
+  const blogsToInsert = helper.initialBlogs.map(el => ({ ...el, user: rootId }))
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Blog.insertMany(blogsToInsert)
 })
 describe('when there is initial blogs', () => {
   test('blogs are returned as json', async () => {
@@ -38,18 +41,23 @@ describe('when there is initial blogs', () => {
 
 describe('addition of a new blog', () => {
   test('succeeds with a valid new blog', async () => {
+    const users = await helper.usersInDb()
+    const rootUser = users[0]
+
     const newBlog = {
       title: 'Zort',
       author: 'CanDoe',
       url: 'http://example.org',
-      likes: 32
+      likes: 32,
+      userId: rootUser.id
     }
-    await api
+    const response = await api
       .post('/api/blogs')
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
+    console.log(response.body.error)
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
@@ -58,10 +66,14 @@ describe('addition of a new blog', () => {
   })
 
   test('with missing likes defaults to 0', async () => {
+    const users = await helper.usersInDb()
+    const rootUser = users[0]
+
     const faultyBlog = {
       title: 'A Big Title',
       author: 'John Smith',
       url: 'http://example.org',
+      userId: rootUser.id
     }
     const response = await api
       .post('/api/blogs')
@@ -73,16 +85,21 @@ describe('addition of a new blog', () => {
   })
 
   test('fails when the title or url is missing', async () => {
+    const users = await helper.usersInDb()
+    const rootUser = users[0]
+
     const missingUrl = {
       title: 'Missing Url',
       author: 'Comte',
-      likes: 4
+      likes: 4,
+      userId: rootUser.id
     }
 
     const missingTitle = {
       author: 'MY G',
       likes: 4,
-      url: 'http://example.org'
+      url: 'http://example.org',
+      userId: rootUser.id
     }
     await api
       .post('/api/blogs')
@@ -189,6 +206,27 @@ describe('updating a blog', () => {
   })
 })
 
+describe('adding a blog with userId', () => {
+  test('succeeds with third users id', async () => {
+    const atStart = await helper.blogsInDb()
+
+    const newBlog = {
+      title: 'A Boring Blog',
+      author: 'Ata Sereç Ersam',
+      url: 'http://example.org',
+      likes: 1500,
+      userId: '6362e4c4593eeb9e89c22fcb'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    const atEnd = await helper.blogsInDb()
+    expect(atEnd).toHaveLength(atStart.length + 1)
+  })
+})
 afterAll(() => {
   mongoose.connection.close()
 })

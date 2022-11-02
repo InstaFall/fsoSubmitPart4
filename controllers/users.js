@@ -3,7 +3,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
 userRouter.get('/', async (req,res) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blogs', { user: 0 })
   res.json(users)
 })
 
@@ -11,11 +11,11 @@ userRouter.post('/', async (req,res) => {
   const { name, username, password } = req.body
   const salt = 10
 
-  const existing = await User.findOne({ username })
-
   if (!password || !username) {
     return res.status(400).json({ error: 'missing data' })
   }
+
+  const existing = await User.findOne({ username })
 
   if (existing) {
     return res.status(400).json({ error: 'username must be unique' })

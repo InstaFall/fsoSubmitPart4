@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -7,12 +8,28 @@ const initialBlogs = [
     author: 'Author One',
     url: 'http://example.org',
     likes: 20,
+    user: new mongoose.Types.ObjectId('6362e1e2bfa18cc0101bec55')
   },
   {
-    title: 'My Blog',
-    author: 'Can',
+    title: 'First two blogs are Root',
+    author: 'Author Two',
     url: 'http://example.org',
-    likes: 302
+    likes: 302,
+    user: new mongoose.Types.ObjectId('6362e1e2bfa18cc0101bec55')
+  },
+  {
+    title: 'A Boring Blog',
+    author: 'Ata Sereç Ersam',
+    url: 'http://example.org',
+    likes: 1500,
+    user: new mongoose.Types.ObjectId('6362e1e3bfa18cc0101bec58')
+  },
+  {
+    title: 'Malbora Olma Sanatı',
+    author: 'Bora Balmumcu',
+    url: 'http://example.org',
+    likes: 1,
+    user: new mongoose.Types.ObjectId('6362e1e3bfa18cc0101bec58')
   }
 ]
 

@@ -5,14 +5,12 @@ const Blog = require('../models/blog')
 const helper = require('../tests/test_helper')
 const api = supertest(app)
 
-beforeEach(async () => {
-  const users = await helper.usersInDb()
-  const rootId = users[0].id
-  const blogsToInsert = helper.initialBlogs.map(el => ({ ...el, user: rootId }))
-  await Blog.deleteMany({})
-  await Blog.insertMany(blogsToInsert)
-})
+
 describe('when there is initial blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlogs)
+  })
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -20,7 +18,7 @@ describe('when there is initial blogs', () => {
       .expect('Content-Type', /application\/json/)
   },100000)
 
-  test('there are two blogs', async () => {
+  test('there are four blogs', async () => {
     const response = await api.get('/api/blogs')
 
     expect(response.body).toHaveLength(helper.initialBlogs.length)
@@ -40,44 +38,59 @@ describe('when there is initial blogs', () => {
 })
 
 describe('addition of a new blog', () => {
-  test('succeeds with a valid new blog', async () => {
-    const users = await helper.usersInDb()
-    const rootUser = users[0]
-
+  test('succeeds with a valid new blog and token', async () => {
+    const blogsAtStart = await helper.blogsInDb()
     const newBlog = {
       title: 'Zort',
       author: 'CanDoe',
       url: 'http://example.org',
       likes: 32,
-      userId: rootUser.id
     }
-    const response = await api
+    const userLogin = {
+      username: 'phenomenal',
+      password: 'uncrackable'
+    }
+    const login = await api
+      .post('/api/login')
+      .send(userLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const authorization = `bearer ${login.body.token}`
+
+    await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', authorization)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    console.log(response.body.error)
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
     const titles = blogsAtEnd.map((el) => el.title)
     expect(titles).toContain('Zort')
   })
 
   test('with missing likes defaults to 0', async () => {
-    const users = await helper.usersInDb()
-    const rootUser = users[0]
+    const userLogin = {
+      username: 'phenomenal',
+      password: 'uncrackable'
+    }
+    const login = await api
+      .post('/api/login')
+      .send(userLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const authorization = `bearer ${login.body.token}`
 
     const faultyBlog = {
       title: 'A Big Title',
       author: 'John Smith',
       url: 'http://example.org',
-      userId: rootUser.id
     }
     const response = await api
       .post('/api/blogs')
       .send(faultyBlog)
+      .set('Authorization', authorization)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -85,35 +98,56 @@ describe('addition of a new blog', () => {
   })
 
   test('fails when the title or url is missing', async () => {
-    const users = await helper.usersInDb()
-    const rootUser = users[0]
+    const userLogin = {
+      username: 'phenomenal',
+      password: 'uncrackable'
+    }
+    const login = await api
+      .post('/api/login')
+      .send(userLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const authorization = `bearer ${login.body.token}`
 
     const missingUrl = {
       title: 'Missing Url',
       author: 'Comte',
-      likes: 4,
-      userId: rootUser.id
+      likes: 4
     }
-
     const missingTitle = {
       author: 'MY G',
       likes: 4,
-      url: 'http://example.org',
-      userId: rootUser.id
+      url: 'http://example.org'
     }
+
     await api
       .post('/api/blogs')
       .send(missingTitle)
+      .set('Authorization', authorization)
       .expect(400)
 
     await api
       .post('/api/blogs')
       .send(missingUrl)
+      .set('Authorization', authorization)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   },100000)
+
+  test('fails when the token is missing', async () => {
+    const newBlog = {
+      title: 'Missing Token',
+      author: 'The Man Himself',
+      url: 'http://example.org',
+      likes: 999
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  })
 })
 
 describe('viewing a specific blog', () => {

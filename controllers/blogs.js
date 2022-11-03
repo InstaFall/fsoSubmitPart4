@@ -27,7 +27,7 @@ blogRouter.get('/:id', async (req,res) => {
 blogRouter.post('/', async (req,res) => {
   const body = req.body
   if(!req.token) {
-    return res.status(401).json({ error: 'authorization failed' })
+    return res.status(401).json({ error: 'authorization failed: no token' })
   }
   if(!req.user) {
     return res.status(401).json({ error: 'token missing or invalid' })

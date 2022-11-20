@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt')
 
 userRouter.get('/', async (req,res) => {
   const users = await User.find({}).populate('blogs', { user: 0 })
+  console.log('RESPONSE OF GET REQUEST TO /api/users')
+  console.log(users)
+  console.log('----')
   res.json(users)
 })
 
@@ -18,6 +21,7 @@ userRouter.post('/', async (req,res) => {
   const existing = await User.findOne({ username })
 
   if (existing) {
+    console.log('user is already in the database')
     return res.status(400).json({ error: 'username must be unique' })
   }
 

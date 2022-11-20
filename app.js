@@ -25,10 +25,17 @@ app.use(express.json())
 app.use(express.static('build'))
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
+app.use(middleware.userExtractor)
+
 
 app.use('/api/login', loginRouter)
-app.use('/api/blogs', middleware.userExtractor, blogRouter)
+app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
+
+if(process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing',testingRouter)
+}
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
